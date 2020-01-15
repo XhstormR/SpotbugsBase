@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindbugsPlugin>
+
+    <Detector class="detector.MyDetector" reports="MY_BUG" speed="fast"/>
+
+    <BugPattern type="MY_BUG" category="CORRECTNESS"/>
+
+</FindbugsPlugin>
