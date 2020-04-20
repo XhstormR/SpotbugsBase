@@ -1,7 +1,7 @@
-rootProject.name = "Spotbugs"
+rootProject.name = "SpotbugsBase"
 
 pluginManagement {
     repositories {
-        maven("https://maven.aliyun.com/repository/gradle-plugin")
+        maven("https://mirrors.huaweicloud.com/repository/maven")
     }
 }

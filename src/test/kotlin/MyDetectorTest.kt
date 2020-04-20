@@ -1,33 +1,27 @@
-import edu.umd.cs.findbugs.test.CountMatcher
-import edu.umd.cs.findbugs.test.SpotBugsRule
-import edu.umd.cs.findbugs.test.matcher.BugInstanceMatcherBuilder
+import edu.umd.cs.findbugs.test.SpotBugsExtension
+import edu.umd.cs.findbugs.test.SpotBugsRunner
 import java.nio.file.Paths
-import org.hamcrest.MatcherAssert
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(SpotBugsExtension::class)
 class MyDetectorTest {
 
-    @get:Rule
-    val spotbugs = SpotBugsRule()
-
     @Test
-    fun testGoodCase() {
+    fun testGoodCase(spotbugs: SpotBugsRunner) {
         val path = Paths.get("build/classes/kotlin/test", "GoodCase.class")
-        val bugCollection = spotbugs.performAnalysis(path)
-        val bugTypeMatcher = BugInstanceMatcherBuilder()
-                .bugType("MY_BUG")
-                .build()
-        MatcherAssert.assertThat(bugCollection, CountMatcher.containsExactly(0, bugTypeMatcher))
+        val bugs = spotbugs.performAnalysis(path)
+
+        Assertions.assertEquals(0, bugs.collection.size)
     }
 
     @Test
-    fun testBadCase() {
+    fun testBadCase(spotbugs: SpotBugsRunner) {
         val path = Paths.get("build/classes/kotlin/test", "BadCase.class")
-        val bugCollection = spotbugs.performAnalysis(path)
-        val bugTypeMatcher = BugInstanceMatcherBuilder()
-                .bugType("MY_BUG")
-                .build()
-        MatcherAssert.assertThat(bugCollection, CountMatcher.containsExactly(1, bugTypeMatcher))
+        val bugs = spotbugs.performAnalysis(path)
+
+        Assertions.assertEquals(1, bugs.collection.size)
+        Assertions.assertTrue(bugs.collection.map { it.type }.contains("MY_BUG"))
     }
 }

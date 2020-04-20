@@ -5,13 +5,13 @@ version = "1.0-SNAPSHOT"
 plugins {
     idea
     application
-    val kotlinVersion = "1.3.61"
+    val kotlinVersion = "1.3.72"
     kotlin("jvm") version kotlinVersion
-    id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
 }
 
 repositories {
-    maven("https://maven.aliyun.com/repository/jcenter")
+    maven("https://mirrors.huaweicloud.com/repository/maven")
 }
 
 dependencies {
@@ -19,27 +19,24 @@ dependencies {
 
     compileOnly("com.github.spotbugs:spotbugs:+")
 
-    testImplementation("junit:junit:+")
+    testImplementation("org.junit.jupiter:junit-jupiter:+")
+
     testImplementation("com.github.spotbugs:spotbugs:+")
-    testImplementation("com.github.spotbugs:test-harness:+")
+    testImplementation("com.github.spotbugs:test-harness-jupiter:+")
 }
 
 tasks {
-    val beforeJar by creating {
-        buildDir
-                .resolve("tmp").apply { mkdirs() }
-                .resolve("1.txt").apply { createNewFile() }
-                .bufferedWriter().use { configurations.runtimeClasspath.get().forEach { s -> it.write("$s\n") } }
-    }
-
     withType<Jar> {
-        dependsOn(beforeJar)
-        from(buildDir.resolve("tmp/1.txt").bufferedReader().readLines().map { zipTree(it) })
+        from(configurations.runtimeClasspath.get().map { zipTree(it) })
     }
 
     withType<Wrapper> {
-        gradleVersion = "6.0"
+        gradleVersion = "6.3"
         distributionType = Wrapper.DistributionType.ALL
+    }
+
+    withType<Test> {
+        useJUnitPlatform()
     }
 
     withType<KotlinCompile> {
